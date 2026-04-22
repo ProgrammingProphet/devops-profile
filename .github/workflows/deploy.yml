@@ -1,0 +1,65 @@
+name: Deploy Portfolio to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Build and push Docker image to Docker Hub
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t programmingprobhet/profile:v1 .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker tag programmingprobhet/profile:v1 ${{ secrets.DOCKER_USERNAME }}/programmingprobhet/profile:v1
+          docker push ${{ secrets.DOCKER_USERNAME }}/programmingprobhet/profile:v1
+
+  # Deploy the static portfolio website to Oracle Cloud (Nginx)
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Oracle VM Instance
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.ORACLE_VM_IP }}
+          username: ubuntu
+          key: ${{ secrets.ORACLE_VM_SSH_KEY }}
+          script: |
+
+            # Login to Docker Hub
+            
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker stop portfolio || true
+            docker rm portfolio || true
+            
+            docker pull ${{ secrets.DOCKER_USERNAME }}/programmingprobhet/profile:v1
+            docker stop portfolio || true
+            docker rm portfolio || true
+            docker run -d -p 80:80 --name portfolio programmingprobhet/profile:v1
+            
+            # cd ~/portfolio-devops
+            # git pull origin main
+
+            # docker stop portfolio || true
+            # docker rm portfolio || true
+
+            # docker build -t portfolio .
+            # docker run -d -p 80:80 --name portfolio portfolio
+
+
+# Add GitHub Secrets 🔐
+# In GitHub repo → Settings → Secrets → Actions
+# Add:
+# ORACLE_VM_IP → Oracle VM IP
+# ORACLE_VM_SSH_KEY → Oracle VM SSH key content
