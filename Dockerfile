@@ -1,10 +1,14 @@
 FROM nginx:alpine
 
-# Copy application
-COPY . /usr/share/nginx/html
-
 # Clean up default nginx files
-RUN rm /usr/share/nginx/html/index.html
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy application
+COPY --chown=nginx:nginx . /usr/share/nginx/html
+
+# --chown=nginx:nginx - what it does is it copies the application to the /usr/share/nginx/html directory and gives the ownership of the files to the nginx user
+# it is used to avoid the permission denied error when the application is running
+
 
 # Copy nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
