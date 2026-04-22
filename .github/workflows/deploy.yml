@@ -42,7 +42,7 @@ jobs:
             git pull origin main
 
             echo "Pull latest image" 
-            docker pull programmingprobhet/profile:latest 
+            docker pull programmingprobhet/profile:v1 
             
             echo "Stop old container (graceful)" 
             docker stop portfolio || true 
