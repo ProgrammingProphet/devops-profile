@@ -45,7 +45,7 @@ jobs:
             docker pull programmingprobhet/profile:v1
             docker stop portfolio || true
             docker rm portfolio || true
-            docker run -v $(pwd)/certbot/www:/var/www/certbot:rw -v $(pwd)/certbot/conf:/etc/letsencrypt:rw -d -p 80:80 -p 443:443 --name portfolio programmingprobhet/profile:v1
+            docker run -v $(pwd)/certbot/www:/var/www/certbot:rw -d -p 80:80 --name portfolio programmingprobhet/profile:v1
             
   
 # Add GitHub Secrets 🔐
