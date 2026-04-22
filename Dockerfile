@@ -18,3 +18,4 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # COPY ssl/programmingprophet.site/private.key /etc/nginx/ssl/programmingprophet.site/private.key
 
 EXPOSE 80 
+EXPOSE 443
