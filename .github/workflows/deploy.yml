@@ -36,28 +36,18 @@ jobs:
           username: ubuntu
           key: ${{ secrets.ORACLE_VM_SSH_KEY }}
           script: |
+            cd ~/devops-profile
+            git pull origin main
 
-            # Login to Docker Hub
-            
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker stop portfolio || true
             docker rm portfolio || true
-            
-            docker pull ${{ secrets.DOCKER_USERNAME }}/programmingprobhet/profile:v1
+
+            docker pull programmingprobhet/profile:v1
             docker stop portfolio || true
             docker rm portfolio || true
             docker run -d -p 80:80 --name portfolio programmingprobhet/profile:v1
             
-            # cd ~/portfolio-devops
-            # git pull origin main
-
-            # docker stop portfolio || true
-            # docker rm portfolio || true
-
-            # docker build -t portfolio .
-            # docker run -d -p 80:80 --name portfolio portfolio
-
-
+  
 # Add GitHub Secrets 🔐
 # In GitHub repo → Settings → Secrets → Actions
 # Add:
